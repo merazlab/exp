@@ -3,7 +3,7 @@ import time
 import torch
 import torch.nn as nn
 
-def knn(x, k):
+def knn(x, x_, k):
     """
     K-Nearest Neighbors function.
 
