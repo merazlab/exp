@@ -3,10 +3,34 @@ import time
 import torch
 import torch.nn as nn
 
-try:
-    from torch_points import knn
-except (ModuleNotFoundError, ImportError):
-    from torch_points_kernels import knn
+def knn(x, k):
+    """
+    K-Nearest Neighbors function.
+
+    Parameters:
+    - x: Tensor of shape (batch_size, num_points, num_features)
+    - k: Number of neighbors to consider
+
+    Returns:
+    - indices: Tensor of shape (batch_size, num_points, k)
+    - distances: Tensor of shape (batch_size, num_points, k)
+    """
+    batch_size, num_points, num_features = x.size()
+
+    # Compute pairwise distances
+    distances = torch.cdist(x, x)
+
+    # Exclude self-distances (diagonal elements)
+    distances.fill_diagonal_(float('inf'))
+
+    # Find indices of k nearest neighbors
+    indices = torch.topk(distances, k, largest=False).indices
+
+    return indices, distances
+# try:
+#     from torch_points import knn
+# except (ModuleNotFoundError, ImportError):
+#     from torch_points_kernels import knn
 
 class SharedMLP(nn.Module):
     def __init__(
