@@ -1,0 +1,4 @@
+auto.sh
+*.pyc
+**/*.pyc
+
