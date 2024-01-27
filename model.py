@@ -1,45 +1,12 @@
 import time
 
 import torch
-
-import torch_points_kernels.points_cuda
-
 import torch.nn as nn
 
-def knn(input, query, k):
-    r"""
-    Perform k-nearest neighbors search.
-
-    Parameters
-    ----------
-    input : torch.Tensor, shape (B, N, d)
-        The input point cloud.
-    query : torch.Tensor, shape (B, M, d)
-        The query point cloud.
-    k : int
-        The number of nearest neighbors to return.
-
-    Returns
-    -------
-    torch.Tensor, shape (B, M, k)
-        The indices of the k nearest neighbors in the input point cloud.
-    torch.Tensor, shape (B, M, k)
-        The distances to the k nearest neighbors in the input point cloud.
-    """
-    B, N, d = input.size()
-    M = query.size(1)
-
-    # Reshape input and query tensors for broadcasting
-    input = input.unsqueeze(2).expand(B, N, M, d)
-    query = query.unsqueeze(1).expand(B, N, M, d)
-
-    # Calculate Euclidean distance between each input point and each query point
-    dist = torch.norm(input - query, dim=3)
-
-    # Find the indices of the k nearest neighbors for each query point
-    indices = torch.topk(dist, k=k, dim=1, largest=False).indices
-
-    return indices
+try:
+    from torch_points import knn
+except (ModuleNotFoundError, ImportError):
+    from torch_points_kernels import knn
 
 class SharedMLP(nn.Module):
     def __init__(
