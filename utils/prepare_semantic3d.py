@@ -45,7 +45,7 @@ for pc_path in RAW_PATH.glob('*.txt'):
             labels = np.loadtxt(labels_path, dtype=np.float32)
             training_data = True
             dir = VAL_PATH if '3' in name else TRAIN_PATH
-        bunchsize = 1e10^5
+        bunchsize = 1e10 ** 5
         index = 0
         points = []
 
