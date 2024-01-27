@@ -6,34 +6,40 @@ import torch_points_kernels.points_cuda
 
 import torch.nn as nn
 
-# def knn(x, x_, k):
-#     """
-#     K-Nearest Neighbors function.
+def knn(input, query, k):
+    r"""
+    Perform k-nearest neighbors search.
 
-#     Parameters:
-#     - x: Tensor of shape (batch_size, num_points, num_features)
-#     - k: Number of neighbors to consider
+    Parameters
+    ----------
+    input : torch.Tensor, shape (B, N, d)
+        The input point cloud.
+    query : torch.Tensor, shape (B, M, d)
+        The query point cloud.
+    k : int
+        The number of nearest neighbors to return.
 
-#     Returns:
-#     - indices: Tensor of shape (batch_size, num_points, k)
-#     - distances: Tensor of shape (batch_size, num_points, k)
-#     """
-#     batch_size, num_points, num_features = x.size()
+    Returns
+    -------
+    torch.Tensor, shape (B, M, k)
+        The indices of the k nearest neighbors in the input point cloud.
+    torch.Tensor, shape (B, M, k)
+        The distances to the k nearest neighbors in the input point cloud.
+    """
+    B, N, d = input.size()
+    M = query.size(1)
 
-#     # Compute pairwise distances
-#     distances = torch.cdist(x, x)
+    # Reshape input and query tensors for broadcasting
+    input = input.unsqueeze(2).expand(B, N, M, d)
+    query = query.unsqueeze(1).expand(B, N, M, d)
 
-#     # Exclude self-distances (diagonal elements)
-#     distances.fill_diagonal_(float('inf'))
+    # Calculate Euclidean distance between each input point and each query point
+    dist = torch.norm(input - query, dim=3)
 
-#     # Find indices of k nearest neighbors
-#     indices = torch.topk(distances, k, largest=False).indices
+    # Find the indices of the k nearest neighbors for each query point
+    indices = torch.topk(dist, k=k, dim=1, largest=False).indices
 
-#     return indices, distances
-try:
-    from torch_points import knn
-except (ModuleNotFoundError, ImportError):
-    from torch_points_kernels import knn
+    return indices
 
 class SharedMLP(nn.Module):
     def __init__(
