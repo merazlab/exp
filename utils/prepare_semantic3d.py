@@ -7,7 +7,7 @@ from ply import write_ply
 output_type = 'npy'
 i_dont_have_a_lot_of_memory_ok = True
 # ROOT_PATH = (Path(__file__) / '..' / '..').resolve()
-ROOT_PATH = Path('/home/javediiita/cvolume/dl_datasets/semantic3d').resolve()
+ROOT_PATH = Path('/home/javediiita/cvolume/dl_datasets').resolve()
 DATASET_PATH = ROOT_PATH / 'semantic3d'
 RAW_PATH = DATASET_PATH / 'original_data'
 TRAIN_PATH = DATASET_PATH / 'train'
